@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  dio: ^4.0.6
+  dio: any
 
 dev_dependencies:
   flutter_test:
