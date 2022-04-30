@@ -57,7 +57,6 @@ class PrettyDioLogger extends Interceptor {
       _defaultLog('Request ║ $method ');
       _defaultLog('Uri ║ ${uri.toString()}');
       if (requestHeader) {
-        log('[---requestHeader---]');
         final requestHeaders = <String, dynamic>{};
         requestHeaders.addAll(options.headers);
         requestHeaders['contentType'] = options.contentType?.toString();
@@ -66,10 +65,10 @@ class PrettyDioLogger extends Interceptor {
         requestHeaders['connectTimeout'] = options.connectTimeout;
         requestHeaders['receiveTimeout'] = options.receiveTimeout;
         String json = _encoder.convert(requestHeaders);
-        _defaultLog(json);
+        _defaultLog('[---requestHeader---]\n$json');
       }
       if (requestBody) {
-        log('[---requestBody---]');
+        _defaultLog('[---requestBody---]');
         final dynamic data = options.data;
         if (data is Map) {
           String json = _encoder.convert(options.data);
@@ -117,18 +116,16 @@ class PrettyDioLogger extends Interceptor {
       _defaultLog('Uri ║ ${uri.toString()}');
 
       if (responseHeader) {
-        log('[---responseHeader---]');
         final responseHeaders = <String, String>{};
         response.headers
             .forEach((k, list) => responseHeaders[k] = list.toString());
         String json = _encoder.convert(responseHeaders);
-        _defaultLog(json);
+        _defaultLog('[---responseHeader---]\n$json');
       }
 
       if (responseBody) {
-        log('[---responseBody---]');
         String json = _encoder.convert(response.data);
-        _defaultLog(json);
+        _defaultLog('[---responseBody---]\n$json');
       }
       _logProcessingTime();
       _logBlock(isBegin: false);
@@ -137,19 +134,19 @@ class PrettyDioLogger extends Interceptor {
   }
 
   void _defaultLog(String msg) {
-    log(msg);
+    logPrint(msg);
   }
 
   void _logBlock({
     bool isBegin = true,
     String type = '',
   }) {
-    log('=============================================$type=========${isBegin ? 'BEGIN' : 'END'}=====================================================================');
+    logPrint('=============================================$type=========${isBegin ? 'BEGIN' : 'END'}=====================================================================');
   }
 
   void _logProcessingTime() {
     if (showProcessingTime) {
-      log('Processing Time: ${DateTime.now().difference(_startTime).inMilliseconds.toString()} Milliseconds');
+      logPrint('Processing Time: ${DateTime.now().difference(_startTime).inMilliseconds.toString()} Milliseconds');
     }
   }
 }
