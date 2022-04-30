@@ -30,7 +30,7 @@ class PrettyDioLogger extends Interceptor {
   /// you can also write log in a file.
   final void Function(String msg) logPrint;
 
-  final JsonEncoder _encoder = JsonEncoder.withIndent('\t');
+  final JsonEncoder _encoder = const JsonEncoder.withIndent('\t');
 
   PrettyDioLogger({
     this.requestHeader = false,
@@ -148,7 +148,7 @@ class PrettyDioLogger extends Interceptor {
   }
 
   void _logProcessingTime() {
-    if (this.showProcessingTime) {
+    if (showProcessingTime) {
       log('Processing Time: ${DateTime.now().difference(_startTime).inMilliseconds.toString()} Milliseconds');
     }
   }
