@@ -22,11 +22,10 @@ class PrettyDioLogger extends Interceptor {
   /// Print processing time from request to complete in [inMilliseconds]
   final bool showProcessingTime;
 
-  /// Print error message only in debug mode [kDebugMode]
+  /// Print log only in debug mode [kDebugMode]
   final bool debugOnly;
 
   /// Log printer; defaults logPrint log to console.
-  /// In flutter, you'd better use debugPrint.
   /// you can also write log in a file.
   final void Function(String msg) logPrint;
 
@@ -50,40 +49,7 @@ class PrettyDioLogger extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (_canShowLog) {
-      _startTime = DateTime.now();
-      _logBlock(isBegin: true, type: 'onRequest');
-      final uri = options.uri;
-      final method = options.method;
-      _defaultLog('Request ║ $method ');
-      _defaultLog('Uri ║ ${uri.toString()}');
-      if (requestHeader) {
-        final requestHeaders = <String, dynamic>{};
-        requestHeaders.addAll(options.headers);
-        requestHeaders['contentType'] = options.contentType?.toString();
-        requestHeaders['responseType'] = options.responseType.toString();
-        requestHeaders['followRedirects'] = options.followRedirects;
-        requestHeaders['connectTimeout'] = options.connectTimeout;
-        requestHeaders['receiveTimeout'] = options.receiveTimeout;
-        String json = _encoder.convert(requestHeaders);
-        _defaultLog('[---requestHeader---]\n$json');
-      }
-      if (requestBody) {
-        _defaultLog('[---requestBody---]');
-        final dynamic data = options.data;
-        if (data is Map) {
-          String json = _encoder.convert(options.data);
-          _defaultLog(json);
-        }
-        if (data is FormData) {
-          final formDataMap = <String, dynamic>{}
-            ..addEntries(data.fields)
-            ..addEntries(data.files);
-          String json = _encoder.convert(formDataMap);
-          _defaultLog(json);
-        } else {
-          _defaultLog(data.toString());
-        }
-      }
+      _logOnRequest(options);
     }
     super.onRequest(options, handler);
   }
@@ -91,16 +57,7 @@ class PrettyDioLogger extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) {
     if (_canShowLog) {
-      _logBlock(isBegin: true, type: 'onError');
-      if (error) {
-        _defaultLog(
-            'DioError ║ Status: ${err.response?.statusCode} ${err.response?.statusMessage}');
-        if (err.response != null && err.response?.data != null) {
-          _defaultLog(err.response.toString());
-        }
-      }
-      _logProcessingTime();
-      _logBlock(isBegin: false);
+      _logOnError(err);
     }
     super.onError(err, handler);
   }
@@ -108,29 +65,83 @@ class PrettyDioLogger extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (_canShowLog) {
-      _logBlock(isBegin: true, type: 'onResponse');
-      final uri = response.requestOptions.uri;
-      final method = response.requestOptions.method;
-      _defaultLog(
-          'Response ║ $method ║ Status: ${response.statusCode} ${response.statusMessage}');
-      _defaultLog('Uri ║ ${uri.toString()}');
-
-      if (responseHeader) {
-        final responseHeaders = <String, String>{};
-        response.headers
-            .forEach((k, list) => responseHeaders[k] = list.toString());
-        String json = _encoder.convert(responseHeaders);
-        _defaultLog('[---responseHeader---]\n$json');
-      }
-
-      if (responseBody) {
-        String json = _encoder.convert(response.data);
-        _defaultLog('[---responseBody---]\n$json');
-      }
-      _logProcessingTime();
-      _logBlock(isBegin: false);
+      _logOnResponse(response);
     }
     super.onResponse(response, handler);
+  }
+
+  void _logOnRequest(RequestOptions options) {
+    _startTime = DateTime.now();
+    _logBlock(isBegin: true, type: 'onRequest');
+    final uri = options.uri;
+    final method = options.method;
+    _defaultLog('Request ║ $method ');
+    _defaultLog('Uri ║ ${uri.toString()}');
+    if (requestHeader) {
+      final requestHeaders = <String, dynamic>{};
+      requestHeaders.addAll(options.headers);
+      requestHeaders['contentType'] = options.contentType?.toString();
+      requestHeaders['responseType'] = options.responseType.toString();
+      requestHeaders['followRedirects'] = options.followRedirects;
+      requestHeaders['connectTimeout'] = options.connectTimeout;
+      requestHeaders['receiveTimeout'] = options.receiveTimeout;
+      String json = _encoder.convert(requestHeaders);
+      _defaultLog('[---requestHeader---]\n$json');
+    }
+    if (requestBody) {
+      _defaultLog('[---requestBody---]');
+      final dynamic data = options.data;
+      if (data is Map) {
+        String json = _encoder.convert(options.data);
+        _defaultLog(json);
+      }
+      if (data is FormData) {
+        final formDataMap = <String, dynamic>{}
+          ..addEntries(data.fields)
+          ..addEntries(data.files);
+        String json = _encoder.convert(formDataMap);
+        _defaultLog(json);
+      } else {
+        _defaultLog(data.toString());
+      }
+    }
+  }
+
+  void _logOnError(DioError err) {
+    _logBlock(isBegin: true, type: 'onError');
+    if (error) {
+      _defaultLog(
+          'DioError ║ Status: ${err.response?.statusCode} ${err.response?.statusMessage}');
+      if (err.response != null && err.response?.data != null) {
+        _defaultLog(err.response.toString());
+      }
+    }
+    _logProcessingTime();
+    _logBlock(isBegin: false);
+  }
+
+  void _logOnResponse(Response response) {
+    _logBlock(isBegin: true, type: 'onResponse');
+    final uri = response.requestOptions.uri;
+    final method = response.requestOptions.method;
+    _defaultLog(
+        'Response ║ $method ║ Status: ${response.statusCode} ${response.statusMessage}');
+    _defaultLog('Uri ║ ${uri.toString()}');
+
+    if (responseHeader) {
+      final responseHeaders = <String, String>{};
+      response.headers
+          .forEach((k, list) => responseHeaders[k] = list.toString());
+      String json = _encoder.convert(responseHeaders);
+      _defaultLog('[---responseHeader---]\n$json');
+    }
+
+    if (responseBody) {
+      String json = _encoder.convert(response.data);
+      _defaultLog('[---responseBody---]\n$json');
+    }
+    _logProcessingTime();
+    _logBlock(isBegin: false);
   }
 
   void _defaultLog(String msg) {
@@ -141,12 +152,14 @@ class PrettyDioLogger extends Interceptor {
     bool isBegin = true,
     String type = '',
   }) {
-    logPrint('=============================================$type=========${isBegin ? 'BEGIN' : 'END'}=====================================================================');
+    logPrint(
+        '=============================================$type=========${isBegin ? 'BEGIN' : 'END'}=====================================================================');
   }
 
   void _logProcessingTime() {
     if (showProcessingTime) {
-      logPrint('Processing Time: ${DateTime.now().difference(_startTime).inMilliseconds.toString()} Milliseconds');
+      logPrint(
+          'Processing Time: ${DateTime.now().difference(_startTime).inMilliseconds.toString()} ms');
     }
   }
 }
