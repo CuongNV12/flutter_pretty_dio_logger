@@ -92,7 +92,7 @@ class PrettyDioLogger extends Interceptor {
       String json = _encoder.convert(requestHeaders);
       _defaultLog('[---requestHeader---]\n$json');
     }
-    if(queryParameters){
+    if (queryParameters) {
       String json = _encoder.convert(options.queryParameters);
       _defaultLog('[---queryParameters---]\n$json');
     }
