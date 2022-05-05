@@ -12,6 +12,7 @@ Dio dio = Dio();
 dio.interceptors.add(
   PrettyDioLogger(
     requestHeader: true,
+    queryParameters: true,
     requestBody: true,
     responseHeader: true,
     responseBody: true,
@@ -27,3 +28,4 @@ dio.interceptors.add(
 
 
 This package is inspired by the [pretty_dio_logger](https://pub.dev/packages/pretty_dio_logger) package.
+
