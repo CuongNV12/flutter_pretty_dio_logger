@@ -1,6 +1,6 @@
 name: flutter_pretty_dio_logger
 description: Show the correct json format, easy to copy and use.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/CuongNV12/flutter_pretty_dio_logger
 
 environment:

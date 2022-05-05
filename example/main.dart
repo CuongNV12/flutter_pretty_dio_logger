@@ -21,6 +21,7 @@ class _MyAppState extends State<MyApp> {
     dio.interceptors.add(
       PrettyDioLogger(
         requestHeader: true,
+        queryParameters: true,
         requestBody: true,
         responseHeader: true,
         responseBody: true,

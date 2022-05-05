@@ -7,6 +7,9 @@ class PrettyDioLogger extends Interceptor {
   /// Print request header [Options.headers]
   final bool requestHeader;
 
+  /// Print [Options.queryParameters]
+  final bool queryParameters;
+
   /// Print request data [Options.data]
   final bool requestBody;
 
@@ -33,6 +36,7 @@ class PrettyDioLogger extends Interceptor {
 
   PrettyDioLogger({
     this.requestHeader = false,
+    this.queryParameters = false,
     this.requestBody = false,
     this.responseHeader = false,
     this.responseBody = true,
@@ -87,6 +91,10 @@ class PrettyDioLogger extends Interceptor {
       requestHeaders['receiveTimeout'] = options.receiveTimeout;
       String json = _encoder.convert(requestHeaders);
       _defaultLog('[---requestHeader---]\n$json');
+    }
+    if(queryParameters){
+      String json = _encoder.convert(options.queryParameters);
+      _defaultLog('[---queryParameters---]\n$json');
     }
     if (requestBody) {
       _defaultLog('[---requestBody---]');
