@@ -118,8 +118,10 @@ class PrettyDioLogger extends Interceptor {
   void _logOnError(DioError err) {
     _logBlock(isBegin: true, type: 'onError');
     if (error) {
+      final uri = err.requestOptions.uri;
       _defaultLog(
           'DioError ║ Status: ${err.response?.statusCode} ${err.response?.statusMessage}');
+      _defaultLog('Uri ║ ${uri.toString()}');
       if (err.response != null && err.response?.data != null) {
         _defaultLog(err.response.toString());
       }
