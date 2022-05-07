@@ -6,3 +6,6 @@
 
 # 1.0.2
 * Add uri when show error.
+
+# 1.0.3
+* Fix log MultipartFile.
