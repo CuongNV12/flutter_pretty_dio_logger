@@ -53,7 +53,11 @@ class PrettyDioLogger extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (_canShowLog) {
-      _logOnRequest(options);
+      try {
+        _logOnRequest(options);
+      } catch (e) {
+        log('PrettyDioLogger: ' + e.toString());
+      }
     }
     super.onRequest(options, handler);
   }
@@ -61,7 +65,11 @@ class PrettyDioLogger extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) {
     if (_canShowLog) {
-      _logOnError(err);
+      try {
+        _logOnError(err);
+      } catch (e) {
+        log('PrettyDioLogger: ' + e.toString());
+      }
     }
     super.onError(err, handler);
   }
@@ -69,7 +77,11 @@ class PrettyDioLogger extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (_canShowLog) {
-      _logOnResponse(response);
+      try {
+        _logOnResponse(response);
+      } catch (e) {
+        log('PrettyDioLogger: ' + e.toString());
+      }
     }
     super.onResponse(response, handler);
   }
@@ -104,11 +116,12 @@ class PrettyDioLogger extends Interceptor {
         _defaultLog(json);
       }
       if (data is FormData) {
+        _defaultLog('[---FormData---]');
         final formDataMap = <String, dynamic>{}
           ..addEntries(data.fields)
           ..addEntries(data.files);
-        String json = _encoder.convert(formDataMap);
-        _defaultLog(json);
+        formDataMap.forEach((key, value) =>
+            _defaultLog(key.toString() + ': ' + value.toString()));
       } else {
         _defaultLog(data.toString());
       }
