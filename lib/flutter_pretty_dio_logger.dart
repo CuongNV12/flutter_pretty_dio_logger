@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 
 class PrettyDioLogger extends Interceptor {
   /// Print request header [Options.headers]
@@ -25,8 +24,8 @@ class PrettyDioLogger extends Interceptor {
   /// Print processing time from request to complete in [inMilliseconds]
   final bool showProcessingTime;
 
-  /// Print log only in debug mode [kDebugMode]
-  final bool debugOnly;
+  /// Print log
+  final bool canShowLog;
 
   /// Log printer; defaults logPrint log to console.
   /// you can also write log in a file.
@@ -43,16 +42,14 @@ class PrettyDioLogger extends Interceptor {
     this.error = true,
     this.showProcessingTime = true,
     this.logPrint = log,
-    this.debugOnly = true,
+    this.canShowLog = false,
   });
-
-  bool get _canShowLog => ((debugOnly && kDebugMode) || !debugOnly);
 
   late DateTime _startTime;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    if (_canShowLog) {
+    if (canShowLog) {
       try {
         _logOnRequest(options);
       } catch (e) {
@@ -64,7 +61,7 @@ class PrettyDioLogger extends Interceptor {
 
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) {
-    if (_canShowLog) {
+    if (canShowLog) {
       try {
         _logOnError(err);
       } catch (e) {
@@ -76,7 +73,7 @@ class PrettyDioLogger extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    if (_canShowLog) {
+    if (canShowLog) {
       try {
         _logOnResponse(response);
       } catch (e) {

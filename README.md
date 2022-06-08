@@ -18,7 +18,7 @@ dio.interceptors.add(
     responseBody: true,
     error: true,
     showProcessingTime: true,
-    debugOnly: true,
+    // canShowLog: kDebugMode,
   ),
 );
 ```
