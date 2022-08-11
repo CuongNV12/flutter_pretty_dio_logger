@@ -27,6 +27,9 @@ class PrettyDioLogger extends Interceptor {
   /// Print log
   final bool canShowLog;
 
+  /// Print cURL
+  final bool showCUrl;
+
   /// Log printer; defaults logPrint log to console.
   /// you can also write log in a file.
   final void Function(String msg) logPrint;
@@ -43,6 +46,7 @@ class PrettyDioLogger extends Interceptor {
     this.showProcessingTime = true,
     this.logPrint = log,
     this.canShowLog = false,
+    this.showCUrl = false,
   });
 
   late DateTime _startTime;
@@ -53,7 +57,7 @@ class PrettyDioLogger extends Interceptor {
       try {
         _logOnRequest(options);
       } catch (e) {
-        log('PrettyDioLogger: ' + e.toString());
+        _defaultLog('PrettyDioLogger: ' + e.toString());
       }
     }
     super.onRequest(options, handler);
@@ -65,7 +69,7 @@ class PrettyDioLogger extends Interceptor {
       try {
         _logOnError(err);
       } catch (e) {
-        log('PrettyDioLogger: ' + e.toString());
+        _defaultLog('PrettyDioLogger: ' + e.toString());
       }
     }
     super.onError(err, handler);
@@ -77,7 +81,7 @@ class PrettyDioLogger extends Interceptor {
       try {
         _logOnResponse(response);
       } catch (e) {
-        log('PrettyDioLogger: ' + e.toString());
+        _defaultLog('PrettyDioLogger: ' + e.toString());
       }
     }
     super.onResponse(response, handler);
@@ -90,6 +94,9 @@ class PrettyDioLogger extends Interceptor {
     final method = options.method;
     _defaultLog('Request ║ $method ');
     _defaultLog('Uri ║ ${uri.toString()}');
+    if (showCUrl) {
+      _cURLRepresentation(options);
+    }
     if (requestHeader) {
       final requestHeaders = <String, dynamic>{};
       requestHeaders.addAll(options.headers);
@@ -162,6 +169,34 @@ class PrettyDioLogger extends Interceptor {
     }
     _logProcessingTime();
     _logBlock(isBegin: false);
+  }
+
+  void _cURLRepresentation(RequestOptions options) {
+    List<String> components = ['curl -i'];
+    if (options.method.toUpperCase() != 'GET') {
+      components.add('-X ${options.method}');
+    }
+
+    options.headers.forEach((k, v) {
+      if (k != 'Cookie') {
+        components.add('-H "$k: $v"');
+      }
+    });
+
+    if (options.data != null) {
+      // FormData can't be JSON-serialized, so keep only their fields attributes
+      if (options.data is FormData) {
+        options.data = Map.fromEntries(options.data.fields);
+      }
+
+      final data = json.encode(options.data).replaceAll('"', '\\"');
+      components.add('-d "$data"');
+    }
+
+    components.add('"${options.uri.toString()}"');
+
+    String cURL = components.join(' \\\n\t');
+    _defaultLog('[---cURL---]\n$cURL');
   }
 
   void _defaultLog(String msg) {

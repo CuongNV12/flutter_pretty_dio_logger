@@ -15,6 +15,7 @@ void main() {
       responseBody: true,
       error: true,
       showProcessingTime: true,
+      showCUrl: true,
       // canShowLog: kDebugMode,
     ),
   );
