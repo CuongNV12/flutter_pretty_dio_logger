@@ -26,8 +26,10 @@ dio.interceptors.add(
 
 ## How it looks like
 ![cUrl Example](https://github.com/CuongNV12/flutter_pretty_dio_logger/blob/main/images/cUrl_log.png?raw=true "cUrl Example")
+<br />
 ![Response Example](https://github.com/CuongNV12/flutter_pretty_dio_logger/blob/main/images/response_log.png?raw=true "Response Example")
 
 
 This package is inspired by [pretty_dio_logger](https://pub.dev/packages/pretty_dio_logger) and [curl_logger_dio_interceptor](https://pub.dev/packages/curl_logger_dio_interceptor) packages.
-
+<br />
+<br />
