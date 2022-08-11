@@ -1,6 +1,6 @@
 # flutter_pretty_dio_logger
 
-Show the correct json format, easy to copy and use.
+Show the correct json format, cUrl, easy to copy and use for many purposes.
 
 ## Usage
 ```$dart
@@ -18,14 +18,16 @@ dio.interceptors.add(
     responseBody: true,
     error: true,
     showProcessingTime: true,
+    showCUrl: true,
     // canShowLog: kDebugMode,
   ),
 );
 ```
 
 ## How it looks like
+![cUrl Example](https://github.com/CuongNV12/flutter_pretty_dio_logger/blob/main/images/cUrl_log.png?raw=true "cUrl Example")
 ![Response Example](https://github.com/CuongNV12/flutter_pretty_dio_logger/blob/main/images/response_log.png?raw=true "Response Example")
 
 
-This package is inspired by the [pretty_dio_logger](https://pub.dev/packages/pretty_dio_logger) package.
+This package is inspired by [pretty_dio_logger](https://pub.dev/packages/pretty_dio_logger) and [curl_logger_dio_interceptor](https://pub.dev/packages/curl_logger_dio_interceptor) packages.
 

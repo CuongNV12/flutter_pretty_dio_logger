@@ -1,3 +1,6 @@
+# 2.0.1
+* Add cUrl print.
+
 # 2.0.0
 * Remove flutter dependency.
 
