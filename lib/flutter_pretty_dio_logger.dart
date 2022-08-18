@@ -189,8 +189,15 @@ class PrettyDioLogger extends Interceptor {
         options.data = Map.fromEntries(options.data.fields);
       }
 
-      final data = json.encode(options.data).replaceAll('"', '\\"');
-      components.add('-d "$data"');
+      if (options.headers['content-type'] ==
+          'application/x-www-form-urlencoded') {
+        options.data.forEach((k, v) {
+          components.add('-d "$k=$v"');
+        });
+      } else {
+        final data = json.encode(options.data).replaceAll('"', '\\"');
+        components.add('-d "$data"');
+      }
     }
 
     components.add('"${options.uri.toString()}"');
