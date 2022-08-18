@@ -30,6 +30,9 @@ class PrettyDioLogger extends Interceptor {
   /// Print cURL
   final bool showCUrl;
 
+  /// Print FormData
+  final bool convertFormData;
+
   /// Log printer; defaults logPrint log to console.
   /// you can also write log in a file.
   final void Function(String msg) logPrint;
@@ -47,6 +50,7 @@ class PrettyDioLogger extends Interceptor {
     this.logPrint = log,
     this.canShowLog = false,
     this.showCUrl = false,
+    this.convertFormData = false,
   });
 
   late DateTime _startTime;
@@ -185,7 +189,7 @@ class PrettyDioLogger extends Interceptor {
 
     if (options.data != null) {
       // FormData can't be JSON-serialized, so keep only their fields attributes
-      if (options.data is FormData) {
+      if ((options.data is FormData) && convertFormData) {
         options.data = Map.fromEntries(options.data.fields);
       }
 
