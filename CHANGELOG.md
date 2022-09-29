@@ -1,5 +1,8 @@
+# 2.0.3
+* Fix show cUrl for FormData.
+
 # 2.0.2
-* fix cUrl when "content-type" = "application/x-www-form-urlencoded".
+* Fix cUrl when "content-type" = "application/x-www-form-urlencoded".
 
 # 2.0.1
 * Add cUrl print.
