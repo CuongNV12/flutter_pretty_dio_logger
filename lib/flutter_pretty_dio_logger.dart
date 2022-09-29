@@ -61,7 +61,7 @@ class PrettyDioLogger extends Interceptor {
       try {
         _logOnRequest(options);
       } catch (e) {
-        _defaultLog('PrettyDioLogger: ' + e.toString());
+        _defaultLog('PrettyDioLogger: $e');
       }
     }
     super.onRequest(options, handler);
@@ -73,7 +73,7 @@ class PrettyDioLogger extends Interceptor {
       try {
         _logOnError(err);
       } catch (e) {
-        _defaultLog('PrettyDioLogger: ' + e.toString());
+        _defaultLog('PrettyDioLogger: $e');
       }
     }
     super.onError(err, handler);
@@ -85,7 +85,7 @@ class PrettyDioLogger extends Interceptor {
       try {
         _logOnResponse(response);
       } catch (e) {
-        _defaultLog('PrettyDioLogger: ' + e.toString());
+        _defaultLog('PrettyDioLogger: $e');
       }
     }
     super.onResponse(response, handler);
@@ -128,8 +128,7 @@ class PrettyDioLogger extends Interceptor {
         final formDataMap = <String, dynamic>{}
           ..addEntries(data.fields)
           ..addEntries(data.files);
-        formDataMap.forEach((key, value) =>
-            _defaultLog(key.toString() + ': ' + value.toString()));
+        formDataMap.forEach((key, value) => _defaultLog('$key: $value'));
       } else {
         _defaultLog(data.toString());
       }
@@ -186,12 +185,19 @@ class PrettyDioLogger extends Interceptor {
     });
 
     if (options.data != null) {
-      // FormData can't be JSON-serialized, so keep only their fields attributes
-      if ((options.data is FormData) && convertFormData) {
-        options.data = Map.fromEntries(options.data.fields);
-      }
-
-      if (options.headers['content-type'] ==
+      if (options.data is FormData) {
+        if (convertFormData) {
+          final fieldData = Map.fromEntries(options.data.fields);
+          fieldData.forEach((key, value) {
+            components.add('--form $key="$value"');
+          });
+          final fileData = Map.fromEntries(options.data.files);
+          fileData.forEach((key, value) {
+            // can show file name only
+            components.add('--form =@"${(value as MultipartFile).filename}"');
+          });
+        }
+      } else if (options.headers['content-type'] ==
           'application/x-www-form-urlencoded') {
         options.data.forEach((k, v) {
           components.add('-d "$k=$v"');
