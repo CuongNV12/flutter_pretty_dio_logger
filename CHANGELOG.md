@@ -1,3 +1,6 @@
+# 2.1.0
+* Dio 5 support
+
 # 2.0.3
 * Fix show cUrl for FormData.
 

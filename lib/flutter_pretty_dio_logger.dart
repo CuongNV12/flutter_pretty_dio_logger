@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+
 import 'package:dio/dio.dart';
 
 class PrettyDioLogger extends Interceptor {
@@ -107,8 +108,8 @@ class PrettyDioLogger extends Interceptor {
       requestHeaders['contentType'] = options.contentType?.toString();
       requestHeaders['responseType'] = options.responseType.toString();
       requestHeaders['followRedirects'] = options.followRedirects;
-      requestHeaders['connectTimeout'] = options.connectTimeout;
-      requestHeaders['receiveTimeout'] = options.receiveTimeout;
+      requestHeaders['connectTimeout'] = options.connectTimeout?.toString();
+      requestHeaders['receiveTimeout'] = options.receiveTimeout?.toString();
       String json = _encoder.convert(requestHeaders);
       _defaultLog('[---requestHeader---]\n$json');
     }
