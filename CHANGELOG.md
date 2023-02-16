@@ -1,3 +1,7 @@
+# 3.0.0
+* Fix: Converting object to an encodable object failed: Instance of 'Duration'. (issue #5)
+* Support dio 5.
+
 # 2.0.3
 * Fix show cUrl for FormData.
 

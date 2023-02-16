@@ -107,8 +107,8 @@ class PrettyDioLogger extends Interceptor {
       requestHeaders['contentType'] = options.contentType?.toString();
       requestHeaders['responseType'] = options.responseType.toString();
       requestHeaders['followRedirects'] = options.followRedirects;
-      requestHeaders['connectTimeout'] = options.connectTimeout;
-      requestHeaders['receiveTimeout'] = options.receiveTimeout;
+      requestHeaders['connectTimeout'] = options.connectTimeout?.inMilliseconds;
+      requestHeaders['receiveTimeout'] = options.receiveTimeout?.inMilliseconds;
       String json = _encoder.convert(requestHeaders);
       _defaultLog('[---requestHeader---]\n$json');
     }
